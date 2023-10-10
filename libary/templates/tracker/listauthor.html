@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
 {% for author in  authors%}
-{{author.name}}<br>
+<a href = '{% url "tracker:create-book" author.pk %}'>{{author.name}}<br>
 {% empty %}
 <h1>Список авторов пуст</h1>
 {% endfor %}

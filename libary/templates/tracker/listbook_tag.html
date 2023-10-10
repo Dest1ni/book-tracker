@@ -1,0 +1,10 @@
+<ul>
+{% for book in books %}
+    <li>
+        {{book.name}}
+    </li>
+    {% empty %}
+    <h4>Книг нету :(</h4>
+
+{% endfor %}
+</ul>

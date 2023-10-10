@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% load tracker_tags %}
+{% block body %}
+<h3>{{author.name}}</h3>
+{%show_books author.pk%}
+{% endblock body %}

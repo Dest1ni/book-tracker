@@ -1,7 +1,8 @@
 from django.forms import ModelForm
-from .models import Author
+from .models import *
 
-class CreateAuthorForm(ModelForm):
+class CreateBookForm(ModelForm):
     class Meta:
-        model = Author
-        fileds=['name']
+        model = Book
+        fileds = ['name']
+        exclude = ['author']

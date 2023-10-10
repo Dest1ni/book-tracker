@@ -6,6 +6,7 @@ class Author(models.Model):
 
 class Book(models.Model):
     name = models.CharField(max_length=255)
+    description = models.TextField(default="У книги нет описания :(")
     author = models.ForeignKey(Author,on_delete=models.PROTECT)
 
 class Reader(models.Model):
