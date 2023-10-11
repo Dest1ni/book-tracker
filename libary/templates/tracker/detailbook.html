@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block body %}
+<div class = 'text-center'>
+    {{book.name}} <br>
+    {{book.description}}
+</div>
+<a href = "{% url 'tracker:author-book' book.author.pk %}">Назад</a>
+{% endblock body %}

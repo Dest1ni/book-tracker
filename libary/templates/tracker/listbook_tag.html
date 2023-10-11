@@ -1,7 +1,7 @@
 <ul>
 {% for book in books %}
     <li>
-        {{book.name}}
+        <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}}</a>
     </li>
     {% empty %}
     <h4>Книг нету :(</h4>

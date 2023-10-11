@@ -2,5 +2,6 @@
 {% load tracker_tags %}
 {% block body %}
 <h3>{{author.name}}</h3>
-{%show_books author.pk%}
+<a href = "{% url 'tracker:create-book' author.pk %}">Добавить книгу для {{author.name}}</a>
+{% show_books author.pk %}
 {% endblock body %}
