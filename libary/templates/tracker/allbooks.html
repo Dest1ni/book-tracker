@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% load tracker_tags %}
 {% block body %}
-{%show_books%}
+<h1>Доступные книги:</h1>
+<ul>
+{% for book in books %}
+<li>{{book.pk}} <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}}</a></li>
+{% endfor %}
+</ul>
 {% endblock body %}

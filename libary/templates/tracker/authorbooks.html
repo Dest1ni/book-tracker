@@ -2,6 +2,15 @@
 {% load tracker_tags %}
 {% block body %}
 <h3>{{author.name}}</h3>
+{% if request.user.is_superuser %}
 <a href = "{% url 'tracker:create-book' author.pk %}">Добавить книгу для {{author.name}}</a>
-{% show_books author.pk %}
+{% endif %}
+<ul>
+{% for book in books  %}
+<li>
+{{book.pk}} <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}} </a>
+</li>
+{% endfor %}
+</ul>
+<a href = "javascript:history.go(-1)">Назад</a>
 {% endblock body %}

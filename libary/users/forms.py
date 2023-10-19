@@ -1,21 +1,18 @@
+from django import forms
 from django.forms import ModelForm,ChoiceField
 from .models import  DefaultUser
-from django.contrib.auth.forms import UserCreationForm as UserCreationFormGeneric
+from django.contrib.auth.forms import UserCreationForm as UserCreationFormGeneric,AuthenticationForm
 
 class CreateUserForm(UserCreationFormGeneric):
     class Meta:
         model = DefaultUser
-        fields = ["username","password1","password2"]
+        fields = ["name","password1","password2"]
 
-class LoginUserForm(ModelForm):
-    #users = [user.username for user in User.objects.all()]
-    #user = ChoiceField(choices=[(username, username) for username in users])
-
-    class Meta:
-        model = DefaultUser
-        fields = ["username"]
-
-
+class CustomAuthenticationForm(AuthenticationForm):
+    def __init__(self, request, *args, **kwargs) -> None:
+        super().__init__(request, *args, **kwargs)
+        self.fields['username'] = forms.ChoiceField(choices=[(user.username,user.last_name) for user in DefaultUser.objects.all()])
+        #(значение, отображаемое имя)
 
 
 

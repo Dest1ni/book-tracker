@@ -1,23 +1,31 @@
 from typing import Any
+from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
-from django.views.generic import CreateView,ListView,FormView,TemplateView,DetailView
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.views.generic import CreateView,ListView,FormView,DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from django.http import HttpResponse, HttpResponseBadRequest
 from .models import *
 from .forms import *
 
-class CreateAuthorView(CreateView):
+# Поменять логику того показывается или нет кнопка юзеру при наличии пермишинов
+class CreateAuthorView(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
+    login_url = reverse_lazy("users:login-user")
+    permission_required = "tracker.add_author"
     model = Author
     fields=['name']
     template_name = "tracker/createauthor.html"
     success_url = reverse_lazy("tracker:list-author")
 
-class ListAuthorView(ListView):
+class ListAuthorView(LoginRequiredMixin,ListView):
     model = Author
+    login_url = reverse_lazy("users:login-user")
     template_name = "tracker/listauthor.html"
     context_object_name = "authors"
 
-class CreateBookView(FormView):
+class CreateBookView(LoginRequiredMixin,PermissionRequiredMixin,FormView): 
     form_class = CreateBookForm
+    login_url = reverse_lazy("users:login-user")
+    permission_required = "tracker.add_book"
     template_name = "tracker/createbook.html"
     success_url = reverse_lazy("tracker:list-author")
 
@@ -32,22 +40,51 @@ class CreateBookView(FormView):
             book.save()
             return super().form_valid(form)
         else:
-            raise HttpResponseBadRequest()
+            return HttpResponseBadRequest()
         
-class ListBookView(TemplateView):
+class ListBookView(LoginRequiredMixin,ListView):
+    login_url = reverse_lazy("users:login-user")
     template_name = "tracker/allbooks.html"
+    model = Book
+    context_object_name = "books"
+    paginate_by = 10
+    def get_queryset(self) -> QuerySet[Any]:
+        qs =  Book.objects.filter(amount__gt = 0)
+        return qs
 
-class AuthorBookView(TemplateView):
+class AuthorBookView(LoginRequiredMixin,ListView):
+    login_url = reverse_lazy("users:login-user")
     template_name = "tracker/authorbooks.html"
+    model = Book
+    context_object_name = "books"
+    paginate_by = 10
+
+    def get_queryset(self, **kwargs: Any) -> dict[str, Any]:
+        qs = Book.objects.filter(author = Author.objects.filter(pk = self.kwargs['pk']).first(),amount__gt = 0)
+        return qs
+    
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context =  super().get_context_data(**kwargs)
-        author_id = self.kwargs['id']
-        print(author_id)
-        context['author'] = Author.objects.filter(pk = author_id).first()
-        print(context['author'])
-        print(context['author'].pk)
+        context['author'] = Author.objects.filter(pk = self.kwargs['pk']).first()
         return context
 
-class BookDetail(DetailView):
+class BookDetail(LoginRequiredMixin,DetailView):
+    login_url = reverse_lazy("users:login-user")
     model = Book
     template_name = "tracker/detailbook.html"
+
+class TakeBook(LoginRequiredMixin,FormView):
+    form_class = TakeBookForm
+    success_url = reverse_lazy('tracker:list-book')
+    template_name = 'tracker/takebook.html'
+    def form_valid(self, form: Any) -> HttpResponse:
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            book = Book.objects.filter(amount__gt = 0,pk = code).first()
+            if not book:
+                return HttpResponseBadRequest("Книги с таким кодом не существует, либо её нет в наличии")
+            user = self.request.user
+            relation = ReaderBookRelationship(reader = user,book = book)
+            relation.save()
+        return super().form_valid(form)
+    

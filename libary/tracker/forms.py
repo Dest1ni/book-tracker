@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm,Form,IntegerField
 from .models import *
 
 class CreateBookForm(ModelForm):
@@ -6,3 +6,6 @@ class CreateBookForm(ModelForm):
         model = Book
         fileds = ['name']
         exclude = ['author']
+
+class TakeBookForm(Form):
+    code = IntegerField()

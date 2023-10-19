@@ -11,6 +11,13 @@
     {% endblock head %}
 </head>
 <body>
+ <a href = "{% url 'tracker:list-book' %}"> Список доступных книг </a>
+ <a href = "{% url 'tracker:list-author' %}"> Список авторов </a>
+ {% if request.user.is_authenticated %} 
+ {{request.user.last_name}} <br>
+ <a href = "{% url 'users:logout-user'%}">Выйти из аккаунта</a>
+ {% else %}
+ {% endif %}
     {% block body %}
     {% endblock body %}
 </body>

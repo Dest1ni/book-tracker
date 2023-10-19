@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block body %}
+<h1>Список всех авторов</h1>
+{% if request.user.is_superuser %}
+<a href = "{% url 'tracker:create-author'%}">Добавить автора</a> <br> <br>
+{% endif %}
 {% for author in  authors%}
 <a href = '{% url "tracker:author-book" author.pk %}'>{{author.name}} </a><br>
 {% empty %}
