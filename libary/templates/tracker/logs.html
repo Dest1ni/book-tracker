@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 {% block body %}
-<h3>{{author.name}}</h3>
-{% if request.user.is_superuser %}
-<a href = "{% url 'tracker:create-book' author.pk %}">Добавить книгу для {{author.name}}</a>
-{% endif %}
 <ul>
-{% for book in books  %}
+{% for log in logs %}
 <li>
-{{book.pk}} <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}} </a>
+{{log.pk}}
+Название: {{log.book.name}} <br>
+Выдана: {{log.give_date}} <br>
+Возвращена: {{log.return_date}} <br>
+Кому: {{log.reader.name}} <br>
+<br>
 </li>
+{% empty %}
+ Данных нет !
 {% endfor %}
 </ul>
-<a href = "javascript:history.go(-1)">Назад</a>
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}

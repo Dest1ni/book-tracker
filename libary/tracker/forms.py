@@ -7,5 +7,5 @@ class CreateBookForm(ModelForm):
         fileds = ['name']
         exclude = ['author']
 
-class TakeBookForm(Form):
+class TakeReturnBookForm(Form):
     code = IntegerField()

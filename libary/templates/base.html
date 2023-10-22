@@ -16,8 +16,12 @@
  {% if request.user.is_authenticated %} 
  {{request.user.last_name}} <br>
  <a href = "{% url 'users:logout-user'%}">Выйти из аккаунта</a>
- {% else %}
+ <a href = "{% url 'tracker:take-book'%}">Взять книгу</a>
+ <a href = "{% url 'tracker:return-book'%}">Сдать книгу</a>
  {% endif %}
+ {% if request.user.is_superuser %}
+  <a href = "{% url 'tracker:logs-book'%}">История выдач</a>
+ {% endif %} 
     {% block body %}
     {% endblock body %}
 </body>
