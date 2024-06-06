@@ -14,8 +14,10 @@ class RegistrationUserView(CreateView):
     form_class = CreateUserForm
     template_name = 'users/registration.html' 
     success_url = reverse_lazy("tracker:list-book")
+
     def form_valid(self, form):
         user:DefaultUser = form.save(commit=False)
+        print(user)
         last_name,first_name,patronymic =  user.name.split(' ')
         user.last_name,user.first_name,user.patronymic = last_name,first_name,patronymic
         user.username = last_name + '_' + str(DefaultUser.objects.count() + 1)
@@ -26,6 +28,7 @@ class LoginView(BaseLoginView):
     next_page = reverse_lazy("tracker:list-book")
     template_name = 'users/login.html'
     form_class = CustomAuthenticationForm
+    
     
 class LogoutView(BaseLogoutView):
     next_page = reverse_lazy("users:login-user")

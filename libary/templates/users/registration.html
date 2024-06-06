@@ -2,7 +2,27 @@
 {% block body %}
 <form method="POST">
 {% csrf_token %}
-{{form.as_p}}
+<p>
+    <label for="id_name">Name:</label>
+    <input type="text" name="name" maxlength="255" id="id_name" required>
+  </p>
+  <p>
+    <label for="id_password1">Password:</label>
+    <input type="password" name="password1" autocomplete="new-password" required id="id_password1">
+  </p>
+  <p>
+    <label for="id_password2">Password confirmation:</label>
+    <input type="password" name="password2" autocomplete="new-password" required id="id_password2">
+  </p>
 <button type = "submit">Зарегестрироваться</button>
+    {% if form.errors %}
+    <ul>
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li> {{ error }} </li> 
+          {% endfor %}
+        {% endfor %}
+    </ul>
+  {% endif %}
 </form>
 {% endblock body %}

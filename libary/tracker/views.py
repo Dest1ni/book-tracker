@@ -33,9 +33,11 @@ class CreateBookView(LoginRequiredMixin,PermissionRequiredMixin,FormView):
         # Тут не нужна перечада формы, она передается автоматом
         if form.is_valid():
             name = form.cleaned_data['name']
+            amount = form.cleaned_data['amount']
             book = Book(
                 name=name,
-                author=Author.objects.filter(pk=self.kwargs['id']).first()
+                author=Author.objects.filter(pk=self.kwargs['id']).first(),
+                amount = amount,
             )
             book.save()
             return super().form_valid(form)
