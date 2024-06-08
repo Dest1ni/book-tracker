@@ -3,7 +3,7 @@
 <h1>Доступные книги:</h1>
 <ul>
 {% for book in books %}
-<li>{{book.pk}} <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}}</a></li>
+<li>{{book.pk}} <a href = "{% url 'tracker:author-book' book.author.pk %}">{{book.author.name}} </a> <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}}</a></li>
 {% endfor %}
 </ul>
 <div class="pagination">
@@ -12,7 +12,6 @@
             <a href="?page=1"><- first</a>
             <a href="?page={{ page_obj.previous_page_number }}">previous</a>
         {% endif %}
-
         <span class="current">
             Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
         </span>

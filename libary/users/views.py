@@ -7,7 +7,7 @@ from django.contrib.auth.views import LoginView as BaseLoginView,LogoutView as B
 from .models import *
 from .forms import *
 from django.contrib.auth.forms import AuthenticationForm
-    
+from django.contrib.auth.models import Group
 
 class RegistrationUserView(CreateView):
     model = DefaultUser
@@ -17,11 +17,12 @@ class RegistrationUserView(CreateView):
 
     def form_valid(self, form):
         user:DefaultUser = form.save(commit=False)
-        print(user)
         last_name,first_name,patronymic =  user.name.split(' ')
         user.last_name,user.first_name,user.patronymic = last_name,first_name,patronymic
         user.username = last_name + '_' + str(DefaultUser.objects.count() + 1)
+        g = Group.objects.get(name="Users") 
         user.save()
+        g.user_set.add(user)
         return super().form_valid(form)
     
 class LoginView(BaseLoginView):

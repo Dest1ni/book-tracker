@@ -1,9 +1,37 @@
 {% extends "base.html" %}
 {% block body %}
+<p>Фильтрация</p>
+<form method = "post">
+    {% csrf_token %}
+  <label for="id">ID:</label>
+  <input type="text" id="id" name="id" size="4">
+  <label for="name">Название:</label>
+  <input type="text" id="name" name="name"><br><br>
+  <p>Дата выдачи:</p>
+  <label for="give_year">Год</label>
+  <input type="text" id="give_year" name="give_year" size="4">
+  <label for="give_month" >Месяц</label>
+  <input type="text" id="give_month" name="give_month" size="4">
+  <label for="give_day">День</label>
+  <input type="text" id="give_day" name="give_day" size="4"><br><br>
+  <p>Дата возварата:</p>
+  <label for="return_year">Год</label>
+  <input type="text" id="return_year" name="return_year" size="4">
+  <label for="return_month">Месяц</label>
+  <input type="text" id="return_month" name="return_month" size="4">
+  <label for="return_day">День</label>
+  <input type="text" id="return_day" name="return_day" size="4"><br><br>
+  <label for="username">ФИО держателя:</label>
+  <input type="text" id="username" name="username"><br><br>
+<button type="submit">Фильтрация</button>
+</form><br>
+<form method = "get">
+<button type="submit">Сбросить</button>
+</form>
 <ul>
 {% for log in logs %}
 <li>
-{{log.pk}}
+ID: {{log.pk}}
 Название: {{log.book.name}} <br>
 Выдана: {{log.give_date}} <br>
 Возвращена: {{log.return_date}} <br>

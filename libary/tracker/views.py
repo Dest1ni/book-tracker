@@ -1,13 +1,16 @@
 from typing import Any
 from django.db.models.query import QuerySet
+from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView,ListView,FormView,DetailView
+from django.views.generic import CreateView,ListView,FormView,DetailView,View
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest,HttpResponseRedirect
 from .models import *
 from .forms import *
 import datetime
+from django.db.models.functions import Lower
 # Поменять логику того показывается или нет кнопка юзеру при наличии пермишинов
+
 class CreateAuthorView(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
     login_url = reverse_lazy("users:login-user")
     permission_required = "tracker.add_author"
@@ -50,8 +53,9 @@ class ListBookView(LoginRequiredMixin,ListView):
     model = Book
     context_object_name = "books"
     paginate_by = 10
+
     def get_queryset(self) -> QuerySet[Any]:
-        qs =  Book.objects.filter(amount__gt = 0).order_by('pk').all()
+        qs =  Book.objects.select_related('author').filter(amount__gt = 0).all()
         return qs
 
 class AuthorBookView(LoginRequiredMixin,ListView):
@@ -79,6 +83,7 @@ class TakeBookView(LoginRequiredMixin,FormView):
     form_class = TakeReturnBookForm
     success_url = reverse_lazy('tracker:list-book')
     template_name = 'tracker/takebook.html'
+
     def form_valid(self, form: Any) -> HttpResponse:
         if form.is_valid():
             code = form.cleaned_data['code']
@@ -96,6 +101,7 @@ class ReturnBookView(LoginRequiredMixin,FormView):
     form_class = TakeReturnBookForm
     success_url = reverse_lazy('tracker:list-book')
     template_name = 'tracker/returnbook.html'
+
     def form_valid(self, form: Any) -> HttpResponse:
         if form.is_valid():
             code = form.cleaned_data['code']
@@ -117,7 +123,43 @@ class LogsView(LoginRequiredMixin,PermissionRequiredMixin,ListView):
     permission_required = 'view_logentry'
     context_object_name = 'logs'
     paginate_by = 10
-
+    
     def get_queryset(self) -> QuerySet[Any]:
         qs = ReaderBookRelationship.objects.select_related('reader','book').order_by('-give_date').all()
         return qs
+    
+    def post(self,request,*args,**kwargs):
+        book_name = request.POST.get('name')
+        give_year = request.POST.get('give_year')
+        give_month = request.POST.get('give_month')
+        give_day = request.POST.get('give_day')
+        return_year = request.POST.get('return_year')
+        return_month = request.POST.get('return_month')
+        return_day = request.POST.get('return_day')
+        username = request.POST.get('username')
+        id = request.POST.get('id')
+        logs = self.get_queryset()
+        if book_name: # Я пытался сделать это все не зависимым от регистра, а оно никак :(
+            logs = logs.filter(book__name__icontains = book_name)
+        if give_year:
+            logs = logs.filter(give_date__year__contains = give_year)
+        if give_day:
+            logs = logs.filter(give_date__day__contains = give_day)
+        if give_month:
+            logs = logs.filter(give_date__month__contains = give_month)
+        if return_year:
+            logs = logs.filter(return_date__year__contains = return_year)
+        if return_day:
+            logs = logs.filter(return_date__day__contains = return_day)
+        if return_month:
+            logs = logs.filter(return_date__month__contains = return_month)
+        if username:
+            logs = logs.filter(reader__name__icontains = username)
+        if id:
+            logs = logs.filter(book__pk__icontains = id)
+        return render(request,'tracker/logs.html',{'logs':logs.order_by('-give_date').all()})
+     
+class Redirect(View):
+
+    def get(self,request,*args,**kwargs):
+        return HttpResponseRedirect(reverse_lazy("tracker:list-author"))
