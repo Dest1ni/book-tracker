@@ -9,16 +9,19 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('tracker', '0003_book_amount'),
+        ("tracker", "0003_book_amount"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='readerbookrelationship',
-            name='reader',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL),
+            model_name="readerbookrelationship",
+            name="reader",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.DeleteModel(
-            name='Reader',
+            name="Reader",
         ),
     ]
