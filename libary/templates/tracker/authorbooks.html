@@ -1,6 +1,14 @@
 {% extends "base.html" %}
+{% load static %}
 {% block body %}
-<h3>{{author.name}}</h3>
+<link href = "{% static 'css/styles.css' %}" rel="stylesheet">
+<h3>
+    {{author.name}} 
+    {% if perms.tracker.change_author %}
+    <a href = "{% url 'tracker:update-author' author.pk %}" ><img src = "{% static 'tracker/pen.png' %}" class = "logo"> </a>
+    <a href = "{% url 'tracker:delete-author' author.pk %}" ><img src = "{% static 'tracker/cross.png' %}" class = "logo"> </a>
+    {% endif %}
+</h3> 
 {% if perms.tracker.add_book %}
 <a href = "{% url 'tracker:create-book' author.pk %}">Добавить книгу для {{author.name}}</a>
 {% endif %}
@@ -9,6 +17,8 @@
 <li>
 {{book.pk}} <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}} </a>
 </li>
+{% empty %}
+<p>У этого автора нету доступных книг</p>
 {% endfor %}
 </ul>
 <a href = "javascript:history.go(-1)">Назад</a>
@@ -24,8 +34,8 @@
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last -></a>
+            <a href="?page={{ page_obj.next_page_number }}">Следуйщая</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Последняя -></a>
         {% endif %}
     </span>
 </div>

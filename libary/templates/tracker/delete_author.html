@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block body %}
+<p>
+    <form method = "post">
+    {% csrf_token %}
+        <h1>Вы уверены что хотите удалить автора: {{author.name}} ?</h1>
+        <p>Последствия:</p>
+        <p>Это приведет к удалению всех книг автора</p>
+        <p>Это приведет к удалению всех логов связанных с автором и его книгами</p>
+        <button type = "submit">Удалить автора</button>
+        {% if error_message %}
+        <p>{{ error_message }}</p>
+        {% endif %}
+    </form>
+</p>
+
+{% endblock body %}

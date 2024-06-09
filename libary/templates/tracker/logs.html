@@ -23,15 +23,13 @@
   <input type="text" id="return_day" name="return_day" size="4"><br><br>
   <label for="username">ФИО держателя:</label>
   <input type="text" id="username" name="username"><br><br>
-<button type="submit">Фильтрация</button>
+<button type="submit">Фильтрация</button> <button type="submit">Сбросить</button>
 </form><br>
-<form method = "get">
-<button type="submit">Сбросить</button>
-</form>
+
 <ul>
 {% for log in logs %}
 <li>
-ID: {{log.pk}}
+ID: {{log.book.pk}}
 Название: {{log.book.name}} <br>
 Выдана: {{log.give_date}} <br>
 Возвращена: {{log.return_date}} <br>
@@ -45,17 +43,16 @@ ID: {{log.pk}}
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=1"><- first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            <a href="?page=1"><- Первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Предыдующая</a>
         {% endif %}
-
         <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last -></a>
+            <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Последняя -></a>
         {% endif %}
     </span>
 </div>

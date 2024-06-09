@@ -4,9 +4,31 @@
 {% if perms.tracker.add_author %}
 <a href = "{% url 'tracker:create-author'%}">Добавить автора</a> <br> <br>
 {% endif %}
-{% for author in  authors%}
+<form method = "post">
+    {% csrf_token %}
+    <label for="author">Имя автора:</label>
+    <input type="text" id="author" name="author"><br><br>
+    <button type="submit">Фильтрация</button> <button type="submit">Сбросить</button>
+</form><br>
+{% for author in  authors %}
 <a href = '{% url "tracker:author-book" author.pk %}'>{{author.name}} </a><br>
 {% empty %}
 <h1>Список авторов пуст</h1>
 {% endfor %}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1"><- Первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Предыдующая</a>
+        {% endif %}
+        <span class="current">
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Последняя -></a>
+        {% endif %}
+    </span>
+</div>
 {% endblock body %}
