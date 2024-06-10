@@ -136,7 +136,7 @@ class AuthorBookView(LoginRequiredMixin, ListView):
         return qs
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = self.get_context_data(**kwargs)
+        context = super().get_context_data()
         context["author"] = Author.objects.filter(pk=self.kwargs["pk"]).first()
         return context
 

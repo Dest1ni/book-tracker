@@ -116,6 +116,17 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS = {
+    'host': 'localhost',
+    'port': 55001,
+    'db': 0,
+    'password': 'redispw',
+    'prefix': 'default',
+    'socket_timeout': 1,
+    'retry_on_timeout': True
+    }
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
