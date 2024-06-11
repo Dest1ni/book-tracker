@@ -1,59 +1,118 @@
 {% extends "base.html" %}
+{%load static%}
 {% block body %}
-<p>Фильтрация</p>
-<form method = "post">
-    {% csrf_token %}
-  <label for="id">ID:</label>
-  <input type="text" id="id" name="id" size="4">
-  <label for="name">Название:</label>
-  <input type="text" id="name" name="name"><br><br>
-  <p>Дата выдачи:</p>
-  <label for="give_year">Год</label>
-  <input type="text" id="give_year" name="give_year" size="4">
-  <label for="give_month" >Месяц</label>
-  <input type="text" id="give_month" name="give_month" size="4">
-  <label for="give_day">День</label>
-  <input type="text" id="give_day" name="give_day" size="4"><br><br>
-  <p>Дата возварата:</p>
-  <label for="return_year">Год</label>
-  <input type="text" id="return_year" name="return_year" size="4">
-  <label for="return_month">Месяц</label>
-  <input type="text" id="return_month" name="return_month" size="4">
-  <label for="return_day">День</label>
-  <input type="text" id="return_day" name="return_day" size="4"><br><br>
-  <label for="username">ФИО держателя:</label>
-  <input type="text" id="username" name="username"><br><br>
-<button type="submit">Фильтрация</button> <button type="submit">Сбросить</button>
-</form><br>
-
+<div class = "text-center mt-2" >
+    <p style="cursor: pointer;" id = "filteringToggle" >Фильтрация <img src = "{% static 'tracker/filtering.png' %}" class = "logo" id = "logo"></p>
+</div>
+<div id = "filtering" style = "display: block">
+    <form method="post">
+            {% csrf_token %}
+            <div class="mb-2 d-flex align-items-center">
+                <label for="id" class="form-label" style = "margin-right:10px">ID</label>
+                <input type="text" class="form-control" id="id" name = "name" style="width: 50px;"/>
+                <div style = "margin-right:10px"></div>
+                <label for="name" class="form-label" style = "margin-right:10px">Название</label>
+                <input type="text" class="form-control" id="name" name = "name" style="width: 400px;"/>
+                <div style = "margin-right:10px"></div>
+                <label for="username" class="form-label" style = "margin-right:10px" >ФИО</label>
+                <input type="text" class="form-control" id="username" name = "username" style="width: 400px;"/>
+            </div>
+            <div class = "text-center">
+            <p>Дата выдачи:</p>
+            <div class="mb-2 d-flex align-items-center">
+            <div class="input-group mb-3" >
+                <input type="text" class="form-control" placeholder="День" aria-label="give_day" id = "give_day" name = "give_day">
+                <span class="input-group-text"></span>
+                <input type="text" class="form-control" placeholder="Месяц" aria-label="give_month" id = "give_month" name = "give_month">
+                <span class="input-group-text"></span>
+                <input type="text" class="form-control" placeholder="Год" aria-label="give_year" id = "give_year" name = "give_year">
+            </div>
+            </div>
+            </div>
+            <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="returned" name = "returned">
+                <label class="form-check-label" for="returned">Возвращена</label>
+            </div>
+            <div id = "returnDateFiltering" class = "mb-3">
+                <div class = "text-center">
+                <p>Дата возврата (Опционально):</p>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="День" aria-label="return_day" id = "return_day" name = "return_day">
+                    <span class="input-group-text"></span>
+                    <input type="text" class="form-control" placeholder="Месяц" aria-label="return_month" id = "return_month" name = "return_month">
+                    <span class="input-group-text"></span>
+                    <input type="text" class="form-control" placeholder="Год" aria-label="return_year" id = "return_year" name = "return_year">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Фильтрация</button>
+            <form action = "{% url 'tracker:logs-book' %}">
+                <button type="submit" class="btn btn-primary">Сбросить</button>
+            </form> 
+        </form><br>
+</div>
 <ul>
-{% for log in logs %}
-<li>
-ID: {{log.book.pk}}
-Название: {{log.book.name}} <br>
-Выдана: {{log.give_date}} <br>
-Возвращена: {{log.return_date}} <br>
-Кому: {{log.reader.name}} <br>
-<br>
-</li>
-{% empty %}
- Данных нет !
-{% endfor %}
+    {% for log in logs %}
+    <li>
+        ID: {{ log.book.pk }}<br>
+        Название: {{ log.book.name }} <br>
+        Выдана: {{ log.give_date }} <br>
+        {% if log.return_date %}
+        Возвращена: {{ log.return_date }} <br>
+        {% else %}
+        Книга не возвращена<br>
+        {% endif %}
+        Пользователь: {{ log.reader.name }} <br>
+        <br>
+    </li>
+    {% empty %}
+    Данных нет!
+    {% endfor %}
 </ul>
+
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=1"><- Первая</a>
-            <a href="?page={{ page_obj.previous_page_number }}">Предыдующая</a>
+        <a href="?page=1"><- Первая</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
         {% endif %}
         <span class="current">
             Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
         </span>
-
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">Последняя -></a>
+        <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Последняя -></a>
         {% endif %}
     </span>
 </div>
+
+<script>
+    var checkbox = document.getElementById('returned');
+    var returnDateFiltering = document.getElementById('returnDateFiltering');
+    var filtering = document.getElementById('filtering');
+    var filtering_toggle = document.getElementById('filteringToggle');
+    var logo = document.getElementById("logo")
+
+    function returnedDate() {
+        if (checkbox.checked) {
+            returnDateFiltering.style.display = "block";
+        } else {
+            returnDateFiltering.style.display = "none";
+        }
+    }
+    function filtering_1() {
+        if (filtering.style.display == "none") {
+            filtering.style.display = "block";
+            logo.src = "{% static "tracker/no_filtering.png" %}"
+            
+        } else {
+            filtering.style.display = "none";
+            logo.src = "{% static "tracker/filtering.png" %}"
+        }
+    }
+    filtering_1();
+    returnedDate();
+    checkbox.addEventListener('click', returnedDate);
+    filteringToggle.addEventListener('click', filtering_1);
+</script>
 {% endblock body %}

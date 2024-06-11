@@ -18,7 +18,7 @@
 <li>
     {{book.pk}} <a href = "{% url 'tracker:author-book' book.author.pk %}">{{book.author.name}} </a> <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}}</a>
     <a href = "#" ><img src = "{% static 'tracker/pen.png' %}" class = "logo"> </a>
-    <a href = "#" ><img src = "{% static 'tracker/cross.png' %}" class = "logo"> </a>
+    <a href = "{% url 'tracker:book-delete' book.pk %}" ><img src = "{% static 'tracker/cross.png' %}" class = "logo"> </a>
 </li>
 {% if perms.tracker.delete_book and perms.tracker.change_book %}
 {% endif %}

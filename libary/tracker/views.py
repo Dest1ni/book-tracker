@@ -220,6 +220,7 @@ class LogsView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         return_day = request.POST.get("return_day")
         username = request.POST.get("username")
         id = request.POST.get("id")
+        returned = request.POST.get("returned")
         logs = self.get_queryset()
         if book_name:
             logs = logs.filter(
@@ -231,12 +232,16 @@ class LogsView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
             logs = logs.filter(give_date__day__contains=give_day)
         if give_month:
             logs = logs.filter(give_date__month__contains=give_month)
-        if return_year:
-            logs = logs.filter(return_date__year__contains=return_year)
-        if return_day:
-            logs = logs.filter(return_date__day__contains=return_day)
-        if return_month:
-            logs = logs.filter(return_date__month__contains=return_month)
+        if returned:
+            logs = logs.exclude(return_date = None)
+            if return_year:
+                logs = logs.filter(return_date__year__contains=return_year)
+            if return_day:
+                logs = logs.filter(return_date__day__contains=return_day)
+            if return_month:
+                logs = logs.filter(return_date__month__contains=return_month)
+        else:
+            logs = logs.filter(return_date = None)
         if username:
             logs = logs.filter(reader__name__icontains=username)
         if id:
@@ -283,6 +288,27 @@ class AuthorDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
             return render(
                 self.request,
                 self.template_name,
-                {"form": form, "error_message": error_message},
+                {"form": form, "error_flag": True},
             )
         return super().form_valid(form)
+
+class BookDelete(LoginRequiredMixin,PermissionRequiredMixin,DeleteView):
+    permission_required = "delete_book"
+    permission_denied_message = "У вас нет прав доступа"
+    model = Book
+    template_name = "tracker/delete_book.html"
+    success_url = reverse_lazy("tracker:list-book")
+
+    def form_valid(self, form):
+        pk = self.kwargs["pk"]
+        book = Book.objects.filter(pk=pk).first()
+        if not book:
+            return HttpResponseBadRequest()
+        given = ReaderBookRelationship.objects.filter(book = pk,return_date = None)
+        if given:
+            return render(
+                self.request,
+                self.template_name,
+                {"form": form, "error_flag": True,'book':book},
+            )
+        return super().form_valid(form)   

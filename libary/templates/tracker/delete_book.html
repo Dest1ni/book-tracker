@@ -3,11 +3,11 @@
 <p>
     <form method = "post">
     {% csrf_token %}
-        <h1>Вы уверены что хотите удалить автора: {{author.name}} ?</h1>
+        <h1>Вы уверены что хотите удалить книгу: {{book.name}} ?</h1>
         <p>Последствия:</p>
-        <p>Это приведет к удалению всех книг автора</p>
-        <p>Это приведет к удалению всех логов связанных с автором и его книгами</p>
-        <button type = "submit">Удалить автора</button>
+        <p>Это приведет к удалению книги</p>
+        <p>Это приведет к удалению всех логов связанных с этой книгой</p>
+        <button type = "submit">Удалить книгу</button>
     </form>
 </p>
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -18,7 +18,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Нельзя удалить автора все книги которого не сданы пользователями</p>
+        <p>Нельзя удалить книгу которая ещё не возвращена всеми пользователями</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -27,9 +27,9 @@
   </div>
 </div>
 {% if error_flag %}
-    <script>
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-        myModal.show();
-    </script>
+<script>
+    var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+    myModal.show();
+</script>
 {% endif %}
 {% endblock body %}
