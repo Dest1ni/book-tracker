@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-9)616tew+&brr%v4@4oi!tvyp@jsaw#wkgxmtxz829#pl7rurn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -83,7 +83,7 @@ DATABASES = {
         "NAME": "libary",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "127.0.0.1",
+        "HOST": "db",
         "PORT": "5432",
     }
 }
@@ -117,13 +117,10 @@ STATICFILES_DIRS = [
 ]
 
 SESSION_ENGINE = 'redis_sessions.session'
+
 SESSION_REDIS = {
-    'host': 'localhost',
-    'port': 55001,
-    'db': 0,
-    'password': 'redispw',
-    'prefix': 'default',
     'socket_timeout': 1,
+    'url':"redis://default:redispw@redis:6379",
     'retry_on_timeout': True
     }
 
