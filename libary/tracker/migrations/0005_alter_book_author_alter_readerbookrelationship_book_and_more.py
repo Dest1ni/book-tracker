@@ -5,6 +5,15 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+
+def create_groups(apps, schema_editor):
+    Group = apps.get_model('auth', 'Group')
+    Group.objects.create(name='Users')
+    Permission = apps.get_model('auth', 'Permission')
+    group = Group.objects.get(name='Users')
+    permissions = Permission.objects.filter(codename__in=['view_author', 'view_book'])
+    group.permissions.add(*permissions)
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -34,4 +43,5 @@ class Migration(migrations.Migration):
                 on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
             ),
         ),
+        migrations.RunPython(create_groups)
     ]
