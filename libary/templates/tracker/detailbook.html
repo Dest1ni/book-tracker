@@ -3,7 +3,12 @@
 <div class = 'text-center'>
     Название: {{book.name}} <br>
     Описание книги: {{book.description}} <br>
+    {% if book.amount %}
     Количество на складе: {{book.amount}}
+    {% else %}
+    На данный момент книга недоступна
+    {% endif %}
+    
 </div>
 <a href = "javascript:history.go(-1)">Назад</a>
 {% endblock body %}

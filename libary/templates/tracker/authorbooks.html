@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 {% block body %}
-<link href = "{% static 'css/styles.css' %}" rel="stylesheet">
 <h3>
     {{author.name}} 
     {% if perms.tracker.change_author %}

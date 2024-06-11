@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
+{%load static%}
 <h1>Доступные книги:</h1>
 <p>Фильтрация</p>
 <form method = "post">
@@ -14,7 +15,13 @@
 </form><br>
 <ul>
 {% for book in books %}
-<li>{{book.pk}} <a href = "{% url 'tracker:author-book' book.author.pk %}">{{book.author.name}} </a> <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}}</a></li>
+<li>
+    {{book.pk}} <a href = "{% url 'tracker:author-book' book.author.pk %}">{{book.author.name}} </a> <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}}</a>
+    <a href = "#" ><img src = "{% static 'tracker/pen.png' %}" class = "logo"> </a>
+    <a href = "#" ><img src = "{% static 'tracker/cross.png' %}" class = "logo"> </a>
+</li>
+{% if perms.tracker.delete_book and perms.tracker.change_book %}
+{% endif %}
 {% endfor %}
 </ul>
 <div class="pagination">
