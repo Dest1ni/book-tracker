@@ -16,4 +16,5 @@ urlpatterns = [
     path("books/return/", ReturnBookView.as_view(), name="return-book"),
     path("books/logs/", LogsView.as_view(), name="logs-book"),
     path("books/delete/<int:pk>", BookDelete.as_view(), name="book-delete"),
+    path("books/update/<int:pk>", BookUpdate.as_view(), name="book-update"),
 ]

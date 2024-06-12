@@ -1,23 +1,33 @@
 {% extends "base.html" %}
 {% block body %}
 {%load static%}
-<h1>Доступные книги:</h1>
-<p>Фильтрация</p>
+<h1>Доступные книги</h1>
+<p>Фильтрация<img src = "{% static 'tracker/filtering.png' %}" class = "logo" id = "filteringToggle"></p>
+<div id = "filtering" style = "display: none">
 <form method = "post">
     {% csrf_token %}
-  <label for="id">ID:</label>
-  <input type="text" id="id" name="id" size="4">
-  <label for="name">Название:</label>
-  <input type="text" id="name" name="name"><br><br>
-  <label for="author">Автор:</label>
-  <input type="text" id="author" name="author"><br><br>
-<button type="submit">Фильтрация</button> <button type="submit">Сбросить</button>
+              <div class="mb-2 d-flex align-items-center">
+                <label for="id" class="form-label" style = "margin-right:10px">ID</label>
+                <input type="text" class="form-control" id="id" name = "id" style="width: 50px;"/>
+                <div style = "margin-right:10px"></div>
+                <label for="name" class="form-label" style = "margin-right:10px">Название</label>
+                <input type="text" class="form-control" id="name" name = "name" style="width: 400px;"/>
+                <div style = "margin-right:10px"></div>
+                
+            </div>
+            <div class="mb-2 d-flex align-items-center">
+            <label for="author" class="form-label" style = "margin-right:10px" >Автор</label>
+                <input type="text" class="form-control" id="author" name = "author" style="width: 400px;"/>
+            </div>
+  <button type="submit" class ="btn btn-info">Фильтрация</button> <button type="submit" class = "btn btn-danger">Сбросить</button>
 </form><br>
+</div>
 <ul>
 {% for book in books %}
 <li>
-    {{book.pk}} <a href = "{% url 'tracker:author-book' book.author.pk %}">{{book.author.name}} </a> <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}}</a>
-    <a href = "#" ><img src = "{% static 'tracker/pen.png' %}" class = "logo"> </a>
+    {{book.pk}} 
+    <a href = "{% url 'tracker:author-book' book.author.pk %}">{{book.author.name}} </a> <a href = "{% url 'tracker:detail-book' book.pk %}">{{book.name}}</a>
+    <a href = "{% url 'tracker:book-update' book.pk %}" ><img src = "{% static 'tracker/pen.png' %}" class = "logo"> </a>
     <a href = "{% url 'tracker:book-delete' book.pk %}" ><img src = "{% static 'tracker/cross.png' %}" class = "logo"> </a>
 </li>
 {% if perms.tracker.delete_book and perms.tracker.change_book %}
@@ -40,4 +50,21 @@
         {% endif %}
     </span>
 </div>
+
+<script>
+var filtering = document.getElementById("filtering");
+var filteringToggle = document.getElementById("filteringToggle");
+
+function toggle(){
+    if (filtering.style.display == "block"){
+        filtering.style.display = "none";
+        filteringToggle.src = "{% static 'tracker/filtering.png' %}";
+    }
+    else {
+        filtering.style.display = "block";
+        filteringToggle.src = "{% static 'tracker/no_filtering.png' %}";
+    }
+}
+filteringToggle.addEventListener("click",toggle)
+</script>
 {% endblock body %}

@@ -1,15 +1,21 @@
 {% extends "base.html" %}
+{%load static%}
 {% block body %}
 <h1>Список всех авторов</h1>
 {% if perms.tracker.add_author %}
 <a href = "{% url 'tracker:create-author'%}">Добавить автора</a> <br> <br>
 {% endif %}
+<p>Фильтрация<img src = "{% static 'tracker/filtering.png' %}" id = "filteringToggle" class = "logo"></p>
+<div id = "filtering" style = "display: none">
 <form method = "post">
     {% csrf_token %}
-    <label for="author">Имя автора:</label>
-    <input type="text" id="author" name="author"><br><br>
-    <button type="submit">Фильтрация</button> <button type="submit">Сбросить</button>
-</form><br>
+    <div class="mb-2 d-flex align-items-center">
+        <label for="author" class="form-label" style = "margin-right:10px" >Автор</label>
+        <input type="text" class="form-control" id="author" name = "author" style="width: 400px;"/>
+    </div>
+    <button type="submit" class = "btn btn-info">Фильтрация</button> <button type="submit" class = "btn btn-danger">Сбросить</button>
+</form>
+</div><br>
 {% for author in  authors %}
 <a href = '{% url "tracker:author-book" author.pk %}'>{{author.name}} </a><br>
 {% empty %}
@@ -24,11 +30,25 @@
         <span class="current">
             Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
         </span>
-
         {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
             <a href="?page={{ page_obj.paginator.num_pages }}">Последняя -></a>
         {% endif %}
     </span>
 </div>
+<script>
+var filtering = document.getElementById("filtering")
+var toggleFiltering = document.getElementById("filteringToggle")
+function toggle(){
+    if (filtering.style.display == "none") {
+        filtering.style.display = "block"
+        filteringToggle.src = "{% static 'tracker/no_filtering.png' %}"
+    }
+    else {
+        filtering.style.display = "none"
+        filteringToggle.src = "{% static 'tracker/filtering.png' %}"
+    }
+}
+toggleFiltering.addEventListener("click",toggle)
+</script>
 {% endblock body %}

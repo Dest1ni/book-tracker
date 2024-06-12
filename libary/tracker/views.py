@@ -312,3 +312,11 @@ class BookDelete(LoginRequiredMixin,PermissionRequiredMixin,DeleteView):
                 {"form": form, "error_flag": True,'book':book},
             )
         return super().form_valid(form)   
+
+class BookUpdate(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
+    permission_required = "update_book"
+    permission_denied_message = "У вас нет прав доступа"
+    model = Book
+    template_name = "tracker/update_book.html"
+    success_url = reverse_lazy("tracker:list-book")
+    fields = ["name"]

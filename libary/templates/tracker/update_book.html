@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block body %}
+<p>
+    <form method = "post">
+    {% csrf_token %}
+        <p>Введите новое название книги для {{book.name}}</p>
+        <input type="text" name="name" value={{book.name}} maxlength="255" required id="id_name">
+        <button type = "submit" class = "btn btn-info">Внести изменения</button>
+    </form>
+</p>
+{% endblock body %}
